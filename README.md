@@ -1,12 +1,12 @@
 *Fitness App*
 
-**Fitness App** is an android app that tracks the users running distance and outputs statistics for calories, steps and distance ran
+**Fitness App** is an android app that tracks the users running distance and outputs statistics for calories, steps and distance 
 
 Submitted by: **Syed Sadman**
 
 
 
-The following **optional** features are implemented:
+The following features are implemented:
 
 * [x] Users can register and log in
 * [x] Once location access is permitted, users can start run and map will zoom into current location and provide tracking
