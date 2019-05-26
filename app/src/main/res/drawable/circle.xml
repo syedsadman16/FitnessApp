@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval" >
-    <solid android:color="#c4441d" />
+android:shape="ring"
+android:thicknessRatio="5"
+android:useLevel="false" >
+<solid android:color="@android:color/transparent" />
+<stroke
+    android:width="7dp"
+    android:color="#D81B60"  />
 </shape>

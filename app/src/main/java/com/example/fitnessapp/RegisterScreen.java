@@ -35,6 +35,7 @@ public class RegisterScreen extends AppCompatActivity {
     }
 
     public void registerBtnClick(View view) {
+        //get text from fields
         nameField =  name.getText().toString().trim();
         emailField = email.getText().toString().trim();
         pwField = pw.getText().toString().trim();
@@ -42,7 +43,7 @@ public class RegisterScreen extends AppCompatActivity {
         weightField = weight.getText().toString().trim();
         ageField = age.getText().toString().trim();
 
-
+        //If all the fields have inputs, then proceed with account creation
         if( !isEmpty(name) & !isEmpty(pw) & !isEmpty(age) & !isEmpty(height) & !isEmpty(weight) & !isEmpty(email) ) {
             database.execSQL("INSERT INTO account (name, password, email, age, height, weight) VALUES ('"+nameField+"','"+pwField+"','"+emailField+"','"+heightField+"','"+weightField+"','"+ageField+"')");
             Log.i("Msg", "Successfuly Created?");

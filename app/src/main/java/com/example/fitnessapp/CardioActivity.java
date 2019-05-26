@@ -3,10 +3,12 @@ package com.example.fitnessapp;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -30,6 +32,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -54,10 +58,16 @@ public class CardioActivity extends AppCompatActivity {
     private LocationManager locationManager;
     Location locationA = new Location("A");
     Location locationB = new Location("B");
-    TextView distanceDisplay, timeDisplay;
-    double totalDistanceFeet, totalDistanceMiles;
+    Location Marker = new Location("M");
+    SharedPreferences statSharedPreferences,acctSharedPreferences;
+    TextView distanceDisplay, calorieDisplay, stepsDisplay;
     Button startBtn,endBtn;
-    long totalSeconds;
+    double totalDistanceFeet = 0.0;
+    double totalDistanceMiles = 0.0;
+    double calorieMile = 0.0;
+    int estimateSteps = 0;
+
+
 
 
     @Override
@@ -83,6 +93,11 @@ public class CardioActivity extends AppCompatActivity {
         startBtn = findViewById(R.id.startBtn);
         endBtn = findViewById(R.id.endBtn);
         endBtn.setEnabled(false);
+
+        //SharedPreferences for daily statistics
+        statSharedPreferences = getSharedPreferences("statistics", Context.MODE_PRIVATE);
+        //SharedPreferences for account details
+        acctSharedPreferences = getSharedPreferences("personDetails", Context.MODE_PRIVATE);
 
     }
 
@@ -180,7 +195,7 @@ public class CardioActivity extends AppCompatActivity {
 
     }
 
-
+    //Attempts to get the current location by performing checks
     private void getCurrentLocation() {
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -217,23 +232,12 @@ public class CardioActivity extends AppCompatActivity {
 
     //When user is ready to start run
     public void startRun(View view) {
-
-        Location location = null;
-        distanceDisplay = findViewById(R.id.distanceDisplay);
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 12);
-        }
-
-        //Retrieve current location
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, locationMinTime, locationMinDistance, locationListener);
-        location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        //retrieve coordinates
+        getLongLat();
 
         //Get the long and lat for starting position
         locationA.setLongitude(latLng.longitude);
         locationA.setLatitude(latLng.latitude);
-
 
         startBtn.setEnabled(false);
         endBtn.setEnabled(true);
@@ -243,37 +247,51 @@ public class CardioActivity extends AppCompatActivity {
 
     //When the user hits the stop button
     public void endRun(View view) {
-        Location location = null;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 12);
-        }
-
-        //Get the ending location
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, locationMinTime, locationMinDistance, locationListener);
-        location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        //Setup displays
+        getLongLat();
+        distanceDisplay = findViewById(R.id.distanceDisplay);
+        calorieDisplay = findViewById(R.id.calorieDisplay);
+        stepsDisplay = findViewById(R.id.stepsDisplay);
 
         locationB.setLatitude(latLng.latitude);
         locationB.setLongitude(latLng.longitude);
 
         //Conversions
+        String weightString = acctSharedPreferences.getString("weight", "0");
+        int weight = Integer.parseInt(weightString);
         double distanceMiles = (locationA.distanceTo(locationB) / 1000) * 0.6213;
         double distanceFeet = (locationA.distanceTo(locationB) / 1000) * 3290;
+        estimateSteps = (int) (distanceMiles * 2000);
+        calorieMile = distanceMiles * 0.57 * weight;
+        Log.i("Calorie", String.valueOf(calorieMile));
 
-        //Print the distance from starting to ending
+        //Print to TextViews
         distanceDisplay.setText("Miles: "+ String.format("%.2f", distanceMiles) + "\n" +
                 "Feet" + String.format("%.2f",distanceFeet));
+        calorieDisplay.setText(String.format("%.2f",calorieMile));
+        stepsDisplay.setText(Integer.toString(estimateSteps));
 
         //Update Total distance
         totalDistanceMiles += distanceMiles;
-        totalDistanceFeet += distanceMiles;
+        totalDistanceFeet += distanceFeet;
+
+        //Save to local storage
+        SharedPreferences.Editor editor = statSharedPreferences.edit();
+        editor.putString("dist", Double.toString(totalDistanceMiles));
+        editor.apply();
+        editor.putString("calorie", Double.toString(calorieMile));
+        editor.apply();
+        editor.putInt("steps", estimateSteps);
+        editor.apply();
+
 
         startBtn.setEnabled(true);
         endBtn.setEnabled(false);
         Toast.makeText(getApplicationContext(), "End Run", Toast.LENGTH_SHORT).show();
-        Log.i("LocationA", String.valueOf(locationA.getLatitude()));
-        Log.i("Distance Test",Double.toString(distanceMiles));
+
     }
+
+
 
     private void findUser(Location location) {
 
@@ -292,6 +310,33 @@ public class CardioActivity extends AppCompatActivity {
             googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
         }
     }
+
+
+    //Repetitive uses to get curent location of user
+    public void getLongLat(){
+        Location location = null;
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 12);
+        }
+
+        //Retrieve current location
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, locationMinTime, locationMinDistance, locationListener);
+        location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+    }
+
+
+/* Attempt to set reminder once person is at location.
+// Requires using Geofence and setting alarm once user is witin proximity
+//
+    public void setLocatonReminder(View view){
+        getLongLat();
+        Marker.setLongitude(latLng.longitude);
+        Marker.setLatitude(latLng.latitude);
+    }
+*/
 
 
 

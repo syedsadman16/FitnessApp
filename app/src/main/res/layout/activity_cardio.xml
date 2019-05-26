@@ -16,7 +16,7 @@
         android:layout_marginEnd="164dp"
         android:layout_marginRight="164dp"
         android:layout_marginBottom="670dp"
-        android:text="Time"
+        android:text="Steps"
         android:textAppearance="@style/TextAppearance.AppCompat.Button"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -65,23 +65,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.203" />
 
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="178dp"
-        android:layout_height="57dp"
-        android:layout_marginStart="11dp"
-        android:layout_marginLeft="11dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="11dp"
-        android:layout_marginRight="11dp"
-        android:layout_marginBottom="25dp"
-        android:text="00:00:00"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/endBtn"
-        app:layout_constraintStart_toEndOf="@+id/startBtn"
-        app:layout_constraintTop_toBottomOf="@+id/mapView" />
-
     <Button
         android:id="@+id/startBtn"
         android:layout_width="wrap_content"
@@ -111,11 +94,10 @@
         android:text="Stop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView7"
         app:layout_constraintTop_toBottomOf="@+id/mapView" />
 
     <TextView
-        android:id="@+id/timeTextView"
+        android:id="@+id/stepsDisplay"
         android:layout_width="83dp"
         android:layout_height="56dp"
         android:layout_marginStart="164dp"
@@ -135,7 +117,7 @@
         app:layout_constraintVertical_bias="0.265" />
 
     <TextView
-        android:id="@+id/distanceView3"
+        android:id="@+id/calorieDisplay"
         android:layout_width="83dp"
         android:layout_height="56dp"
         android:layout_marginStart="284dp"
@@ -188,5 +170,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/reminderBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52dp"
+        android:layout_marginLeft="52dp"
+        android:layout_marginTop="31dp"
+        android:layout_marginEnd="62dp"
+        android:layout_marginRight="62dp"
+        android:layout_marginBottom="47dp"
+        android:text="Set Reminder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endBtn"
+        app:layout_constraintStart_toEndOf="@+id/startBtn"
+        app:layout_constraintTop_toBottomOf="@+id/mapView" />
 
 </android.support.constraint.ConstraintLayout>
