@@ -34,11 +34,7 @@ public class HomeActivity extends AppCompatActivity {
         //Sharedpreference for details about registered user
         acctSharedPreferences = getSharedPreferences("personDetails", Context.MODE_PRIVATE);
 
-/*
- // Attempts to set daily statistics on home page
- // Distance works fine but Steps and Calories dont
- // Used the same logic, still some bugs
- */
+        //Updating the most recent statistics
         String dist = statSharedPreferences.getString("dist", "0");
         distance = findViewById(R.id.mainDistanceDisplay);
         distance.setText(dist);
@@ -47,15 +43,13 @@ public class HomeActivity extends AppCompatActivity {
         greetings = findViewById(R.id.greetingTextView);
         greetings.setText("You are signed in as " + name);
 
- //       String calorie = statSharedPreferences.getString("calorie", "0");
+        String calorie = statSharedPreferences.getString("calorie", "0");
         calories = findViewById(R.id.calorieDisplay);
-//        calories.setText(calorie);
+        calories.setText(calorie);
 
         Integer steps = statSharedPreferences.getInt("steps", 0);
         estSteps = findViewById(R.id.stepsDisplay);
-//        estSteps.setText(steps);
-
-
+        estSteps.setText(Integer.toString(steps));
 
     }
 
@@ -88,10 +82,8 @@ public class HomeActivity extends AppCompatActivity {
 
     //When the 'START RUN' button is clicked
     public void startRun(View view) {
-
         Intent goToCardio = new Intent(getApplicationContext(), CardioActivity.class);
         startActivity(goToCardio);
-
     }
 
 

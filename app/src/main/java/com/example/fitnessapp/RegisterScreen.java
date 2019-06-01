@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+//USING SQLITE DATABASES
 public class RegisterScreen extends AppCompatActivity {
 
     SQLiteDatabase database;

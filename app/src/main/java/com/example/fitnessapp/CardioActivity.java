@@ -75,6 +75,7 @@ public class CardioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cardio);
 
+        //Init the map view
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
 
@@ -90,6 +91,7 @@ public class CardioActivity extends AppCompatActivity {
         initMap();
         getCurrentLocation();
 
+        //Init the buttons
         startBtn = findViewById(R.id.startBtn);
         endBtn = findViewById(R.id.endBtn);
         endBtn.setEnabled(false);
@@ -151,9 +153,8 @@ public class CardioActivity extends AppCompatActivity {
     }
 
     /*
-    /** Called by Android
+    /** Android activity lifecycle
     */
-
     //When user receives a small event, application is put on pause
     @Override
     protected void onPause() {
@@ -253,6 +254,7 @@ public class CardioActivity extends AppCompatActivity {
         calorieDisplay = findViewById(R.id.calorieDisplay);
         stepsDisplay = findViewById(R.id.stepsDisplay);
 
+        //Setting up coordinates
         locationB.setLatitude(latLng.latitude);
         locationB.setLongitude(latLng.longitude);
 
@@ -263,7 +265,6 @@ public class CardioActivity extends AppCompatActivity {
         double distanceFeet = (locationA.distanceTo(locationB) / 1000) * 3290;
         estimateSteps = (int) (distanceMiles * 2000);
         calorieMile = distanceMiles * 0.57 * weight;
-        Log.i("Calorie", String.valueOf(calorieMile));
 
         //Print to TextViews
         distanceDisplay.setText("Miles: "+ String.format("%.2f", distanceMiles) + "\n" +
@@ -275,7 +276,7 @@ public class CardioActivity extends AppCompatActivity {
         totalDistanceMiles += distanceMiles;
         totalDistanceFeet += distanceFeet;
 
-        //Save to local storage
+        //Give data to HomeActivity
         SharedPreferences.Editor editor = statSharedPreferences.edit();
         editor.putString("dist", Double.toString(totalDistanceMiles));
         editor.apply();
@@ -326,17 +327,6 @@ public class CardioActivity extends AppCompatActivity {
         latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
     }
-
-
-/* Attempt to set reminder once person is at location.
-// Requires using Geofence and setting alarm once user is witin proximity
-//
-    public void setLocatonReminder(View view){
-        getLongLat();
-        Marker.setLongitude(latLng.longitude);
-        Marker.setLatitude(latLng.latitude);
-    }
-*/
 
 
 
